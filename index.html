@@ -6,30 +6,15 @@
 <title>Rohit Bachhav | Portfolio</title>
 <style>
 :root{
-  --bg:#fefefe; --text:#111; --accent:#0071e3;
+  --bg:#fefefe; --text:#111; --accent:#0071e3; --card-bg:rgba(255,255,255,0.6);
 }
-body.dark{--bg:#111; --text:#f5f5f5; --accent:#0aa3ff;}
-body{
-  margin:0; font-family:"Segoe UI",Roboto,sans-serif;
-  background:var(--bg); color:var(--text); transition:background 0.5s,color 0.5s;
-  overflow-x:hidden; position:relative;
-}
-
-/* Canvas background */
-canvas#bgCanvas{
-  position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none;
-}
-
-/* Ensure content appears above canvas */
-body > *:not(canvas){position:relative; z-index:1;}
+body.dark{--bg:#111;--text:#f5f5f5;--accent:#0aa3ff;--card-bg:rgba(28,28,28,0.6);}
+body{margin:0;font-family:"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background 0.5s,color 0.5s;overflow-x:hidden;position:relative;}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
 /* Header */
-header{
-  position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
-  padding:1rem 2rem; background:rgba(255,255,255,0.3); backdrop-filter:blur(10px);
-  box-shadow:0 2px 12px rgba(0,0,0,0.05); z-index:1000;
-}
-body.dark header{background:rgba(28,28,28,0.3);}
+header{position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.4);backdrop-filter:blur(10px);padding:1rem 2rem;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+body.dark header{background:rgba(28,28,28,0.4);}
 header .logo{font-weight:bold;font-size:1.4rem;color:var(--accent);}
 header nav a{margin:0 1rem;text-decoration:none;color:var(--text);font-weight:500;position:relative;transition:color 0.3s;}
 header nav a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--accent);transition:0.3s;}
@@ -38,32 +23,29 @@ header nav a:hover{color:var(--accent);}
 #theme-toggle{background:var(--accent);color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;}
 
 /* Sections */
-section{position:relative; padding:6rem 2rem 4rem; max-width:1000px; margin:auto;}
-section h2{text-align:center; margin-bottom:2rem; font-size:2rem; color:var(--accent);}
-
-/* Grids */
-.projects-grid, .skills-grid, .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem;}
-.project-card, .skill-card, .contact-card{
-  padding:1.5rem; border-radius:16px; backdrop-filter:blur(8px); background:rgba(255,255,255,0.15);
-  box-shadow:0 8px 20px rgba(0,0,0,0.1); opacity:0; transform:translateY(40px); transition:transform 0.6s,opacity 0.6s;
-}
-body.dark .project-card, body.dark .skill-card, body.dark .contact-card{background:rgba(28,28,28,0.2);}
-.project-card.visible, .skill-card.visible, .contact-card.visible{opacity:1; transform:translateY(0);}
-.project-card:hover, .skill-card:hover, .contact-card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(0,0,0,0.15);}
+section{position:relative;padding:6rem 2rem 4rem;max-width:1000px;margin:auto;z-index:2;}
+h2{text-align:center;margin-bottom:2rem;position:relative;z-index:2;background:linear-gradient(90deg,var(--accent),#0aa3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite;}
+@keyframes shimmer{0%{background-position:-500px 0;}100%{background-position:500px 0;}}
 
 /* Hero */
-#hero{text-align:center;}
-.hero-tagline{margin:1rem 0;font-weight:500;color:var(--accent);}
+#hero{text-align:center;position:relative;z-index:2;overflow:hidden;}
+.hero-tagline{margin:1rem 0;font-weight:500;color:var(--accent);transition:transform 0.3s;}
 .resume-btn{margin-top:1rem;padding:0.6rem 1.2rem;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-weight:500;transition:background 0.3s,transform 0.3s;}
 .resume-btn:hover{background:#005bb5;transform:scale(1.05);}
 
+/* Cards */
+.projects-grid, .skills-grid, .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;position:relative;z-index:2;}
+.project-card, .skill-card, .contact-card{
+  position:relative;overflow:hidden;padding:1.5rem;border-radius:16px;background:var(--card-bg);backdrop-filter:blur(8px);box-shadow:0 8px 20px rgba(0,0,0,0.1);opacity:0;transform:translateY(40px) rotateX(10deg);transition:transform 0.6s,opacity 0.6s,box-shadow 0.6s;
+}
+.project-card.visible, .skill-card.visible, .contact-card.visible{opacity:1;transform:translateY(0) rotateX(0deg);}
+.project-card:hover, .skill-card:hover, .contact-card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(0,0,0,0.15);}
+
 /* Footer */
-footer{text-align:center;padding:1rem;}
+footer{text-align:center;padding:1rem;background:transparent;color:var(--text);position:relative;z-index:2;}
 </style>
 </head>
 <body>
-
-<canvas id="bgCanvas"></canvas>
 
 <header>
   <div class="logo">Rohit Bachhav</div>
@@ -84,9 +66,9 @@ footer{text-align:center;padding:1rem;}
 <section id="projects">
   <h2>Projects</h2>
   <div class="projects-grid">
-    <div class="project-card"><h3>Exam Seating Arrangement</h3><p>Node.js + MySQL: Dynamic seat allocation.</p><a href="#">GitHub</a></div>
-    <div class="project-card"><h3>File Sharing Web App</h3><p>Node.js + JS: Secure file sharing.</p><a href="#">GitHub</a></div>
-    <div class="project-card"><h3>Mouse Control App</h3><p>React Native + FastAPI: Remote PC control via QR.</p><a href="#">GitHub</a></div>
+    <div class="project-card"><h3>Exam Seating Arrangement System</h3><p>Node.js + MySQL: Dynamic seat allocation algorithm.</p><a href="#">GitHub</a></div>
+    <div class="project-card"><h3>File Sharing Web App</h3><p>Node.js + JS: Secure file sharing and access control.</p><a href="#">GitHub</a></div>
+    <div class="project-card"><h3>Mouse Control App</h3><p>React Native + FastAPI: Remote PC mouse control via QR scan.</p><a href="#">GitHub</a></div>
   </div>
 </section>
 
@@ -140,56 +122,62 @@ document.querySelectorAll('header nav a').forEach(link=>{
   });
 });
 
-// Canvas interactive skill nodes
-const canvas=document.getElementById('bgCanvas');
+// Canvas dense horizontal tech words with slow animation
+const canvas=document.createElement('canvas');
+document.body.appendChild(canvas);
 const ctx=canvas.getContext('2d');
 let W=canvas.width=window.innerWidth;
 let H=canvas.height=window.innerHeight;
 window.addEventListener('resize',()=>{W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;});
 
 const techNames=["Python","SQL","JavaScript","C++","FastAPI","Azure","Pandas","NumPy","PyTorch","TensorFlow"];
-const nodes=[];
-for(let i=0;i<50;i++){
-  nodes.push({
-    x:Math.random()*W,
-    y:Math.random()*H,
-    text:techNames[Math.floor(Math.random()*techNames.length)],
-    size:14+Math.random()*12,
-    dx:(Math.random()*0.2-0.1),
-    dy:(Math.random()*0.2-0.1)
-  });
+const techParticles=[];
+
+// Function to check overlap horizontally
+function isOverlapping(x,y,w,arr){
+  for(let p of arr){
+    if(x < p.x+p.w && x+w > p.x && y < p.y+30 && y+30 > p.y) return true; // 30px height approx
+  }
+  return false;
 }
 
-const mouse={x:W/2, y:H/2};
-document.addEventListener('mousemove', e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
+// Generate dense horizontal words
+for(let i=0;i<120;i++){
+  let fontSize=12+Math.random()*20;
+  let text=techNames[Math.floor(Math.random()*techNames.length)];
+  ctx.font=fontSize+"px Arial";
+  let textWidth=ctx.measureText(text).width;
+  let attempts=0;
+  let x=0,y=0;
+  do{
+    x=Math.random()*(W-50);
+    y=Math.random()*(H-50);
+    attempts++;
+  }while(isOverlapping(x,y,textWidth,techParticles) && attempts<50);
+  techParticles.push({x,y,text,font:fontSize,alpha:0.05+Math.random()*0.2,dx:(Math.random()*0.2-0.1)});
+}
 
+// Mouse position
+const mouse={x:W/2,y:H/2};
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
+
+// Draw loop
 function draw(){
   ctx.clearRect(0,0,W,H);
-  // Draw connecting lines
-  for(let i=0;i<nodes.length;i++){
-    for(let j=i+1;j<nodes.length;j++){
-      let dist=Math.hypot(nodes[i].x-nodes[j].x,nodes[i].y-nodes[j].y);
-      if(dist<150){
-        ctx.strokeStyle=`rgba(0,170,255,0.08)`;
-        ctx.lineWidth=1;
-        ctx.beginPath();
-        ctx.moveTo(nodes[i].x,nodes[i].y);
-        ctx.lineTo(nodes[j].x,nodes[j].y);
-        ctx.stroke();
-      }
-    }
-  }
-  // Draw nodes
-  nodes.forEach(n=>{
-    n.x+=n.dx; n.y+=n.dy;
-    if(n.x<0||n.x>W)n.dx*=-1;
-    if(n.y<0||n.y>H)n.dy*=-1;
-    const dist=Math.hypot(n.x-mouse.x,n.y-mouse.y);
-    const alpha=dist<100?1:0.4;
+  techParticles.forEach(p=>{
+    // slow horizontal floating
+    p.x += p.dx;
+    if(p.x>W) p.x=-50;
+    if(p.x<-50) p.x=W;
+    
+    const dist=Math.hypot(p.x-mouse.x,p.y-mouse.y);
+    let scale=1,alpha=p.alpha;
+    if(dist<100){scale=1.3; alpha=0.5;}
+
     ctx.globalAlpha=alpha;
+    ctx.font=(p.font*scale)+"px Arial";
     ctx.fillStyle=document.body.classList.contains('dark')?'#fff':'#111';
-    ctx.font=`${n.size}px Arial`;
-    ctx.fillText(n.text,n.x,n.y);
+    ctx.fillText(p.text,p.x,p.y);
   });
   requestAnimationFrame(draw);
 }
