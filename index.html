@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rohit Bachhav | Portfolio</title>
+<style>
+:root{
+  --bg:#fefefe; --text:#111; --accent:#0071e3;
+}
+body.dark{--bg:#111; --text:#f5f5f5; --accent:#0aa3ff;}
+body{
+  margin:0; font-family:"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--text); transition:background 0.5s,color 0.5s;
+  overflow-x:hidden; position:relative;
+}
+
+/* Canvas background */
+canvas#bgCanvas{
+  position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none;
+}
+
+/* Ensure content appears above canvas */
+body > *:not(canvas){position:relative; z-index:1;}
+
+/* Header */
+header{
+  position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
+  padding:1rem 2rem; background:rgba(255,255,255,0.3); backdrop-filter:blur(10px);
+  box-shadow:0 2px 12px rgba(0,0,0,0.05); z-index:1000;
+}
+body.dark header{background:rgba(28,28,28,0.3);}
+header .logo{font-weight:bold;font-size:1.4rem;color:var(--accent);}
+header nav a{margin:0 1rem;text-decoration:none;color:var(--text);font-weight:500;position:relative;transition:color 0.3s;}
+header nav a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--accent);transition:0.3s;}
+header nav a:hover::after{width:100%;}
+header nav a:hover{color:var(--accent);}
+#theme-toggle{background:var(--accent);color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;}
+
+/* Sections */
+section{position:relative; padding:6rem 2rem 4rem; max-width:1000px; margin:auto;}
+section h2{text-align:center; margin-bottom:2rem; font-size:2rem; color:var(--accent);}
+
+/* Grids */
+.projects-grid, .skills-grid, .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem;}
+.project-card, .skill-card, .contact-card{
+  padding:1.5rem; border-radius:16px; backdrop-filter:blur(8px); background:rgba(255,255,255,0.15);
+  box-shadow:0 8px 20px rgba(0,0,0,0.1); opacity:0; transform:translateY(40px); transition:transform 0.6s,opacity 0.6s;
+}
+body.dark .project-card, body.dark .skill-card, body.dark .contact-card{background:rgba(28,28,28,0.2);}
+.project-card.visible, .skill-card.visible, .contact-card.visible{opacity:1; transform:translateY(0);}
+.project-card:hover, .skill-card:hover, .contact-card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(0,0,0,0.15);}
+
+/* Hero */
+#hero{text-align:center;}
+.hero-tagline{margin:1rem 0;font-weight:500;color:var(--accent);}
+.resume-btn{margin-top:1rem;padding:0.6rem 1.2rem;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-weight:500;transition:background 0.3s,transform 0.3s;}
+.resume-btn:hover{background:#005bb5;transform:scale(1.05);}
+
+/* Footer */
+footer{text-align:center;padding:1rem;}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<header>
+  <div class="logo">Rohit Bachhav</div>
+  <nav>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button id="theme-toggle">🌙</button>
+</header>
+
+<section id="hero">
+  <h1>Rohit Nivrutti Bachhav</h1>
+  <p class="hero-tagline">Python • SQL • Deep Learning • Azure Certified • Problem Solver</p>
+  <a href="resume.pdf" class="resume-btn" download>Download Resume</a>
+</section>
+
+<section id="projects">
+  <h2>Projects</h2>
+  <div class="projects-grid">
+    <div class="project-card"><h3>Exam Seating Arrangement</h3><p>Node.js + MySQL: Dynamic seat allocation.</p><a href="#">GitHub</a></div>
+    <div class="project-card"><h3>File Sharing Web App</h3><p>Node.js + JS: Secure file sharing.</p><a href="#">GitHub</a></div>
+    <div class="project-card"><h3>Mouse Control App</h3><p>React Native + FastAPI: Remote PC control via QR.</p><a href="#">GitHub</a></div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2>Technical Skills</h2>
+  <div class="skills-grid">
+    <div class="skill-card">Python</div>
+    <div class="skill-card">SQL</div>
+    <div class="skill-card">C++</div>
+    <div class="skill-card">JavaScript</div>
+    <div class="skill-card">FastAPI</div>
+    <div class="skill-card">Pandas & NumPy</div>
+    <div class="skill-card">PyTorch & TensorFlow</div>
+    <div class="skill-card">Azure (AZ-900)</div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <p>📧 <a href="mailto:rohitbachhav122@gmail.com">rohitbachhav122@gmail.com</a></p>
+      <p>📱 Phone: +91-XXXXXXXXXX</p>
+      <p>💼 LinkedIn: <a href="https://linkedin.com/in/rohitbachhav">linkedin.com/in/rohitbachhav</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2025 Rohit Bachhav</footer>
+
+<script>
+// Dark Mode
+const themeBtn=document.getElementById("theme-toggle");
+if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){document.body.classList.add("dark");themeBtn.textContent="☀️";}
+themeBtn.addEventListener("click",()=>{document.body.classList.toggle("dark");themeBtn.textContent=document.body.classList.contains("dark")?"☀️":"🌙";});
+
+// Fade-in Cards
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");});},{threshold:0.2});
+document.querySelectorAll(".project-card,.skill-card,.contact-card").forEach(el=>observer.observe(el));
+
+// Smooth scrolling
+document.querySelectorAll('header nav a').forEach(link=>{
+  link.addEventListener('click', e=>{
+    e.preventDefault();
+    const targetId=link.getAttribute('href').substring(1);
+    const target=document.getElementById(targetId);
+    const headerOffset=document.querySelector('header').offsetHeight;
+    const elementPosition=target.getBoundingClientRect().top;
+    const offsetPosition=elementPosition+window.pageYOffset-headerOffset;
+    window.scrollTo({top:offsetPosition,behavior:'smooth'});
+  });
+});
+
+// Canvas interactive skill nodes
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+let W=canvas.width=window.innerWidth;
+let H=canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight;});
+
+const techNames=["Python","SQL","JavaScript","C++","FastAPI","Azure","Pandas","NumPy","PyTorch","TensorFlow"];
+const nodes=[];
+for(let i=0;i<50;i++){
+  nodes.push({
+    x:Math.random()*W,
+    y:Math.random()*H,
+    text:techNames[Math.floor(Math.random()*techNames.length)],
+    size:14+Math.random()*12,
+    dx:(Math.random()*0.2-0.1),
+    dy:(Math.random()*0.2-0.1)
+  });
+}
+
+const mouse={x:W/2, y:H/2};
+document.addEventListener('mousemove', e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // Draw connecting lines
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      let dist=Math.hypot(nodes[i].x-nodes[j].x,nodes[i].y-nodes[j].y);
+      if(dist<150){
+        ctx.strokeStyle=`rgba(0,170,255,0.08)`;
+        ctx.lineWidth=1;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  // Draw nodes
+  nodes.forEach(n=>{
+    n.x+=n.dx; n.y+=n.dy;
+    if(n.x<0||n.x>W)n.dx*=-1;
+    if(n.y<0||n.y>H)n.dy*=-1;
+    const dist=Math.hypot(n.x-mouse.x,n.y-mouse.y);
+    const alpha=dist<100?1:0.4;
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=document.body.classList.contains('dark')?'#fff':'#111';
+    ctx.font=`${n.size}px Arial`;
+    ctx.fillText(n.text,n.x,n.y);
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
