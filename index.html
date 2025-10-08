@@ -451,8 +451,8 @@ heyText.addEventListener("mousedown", startHold);
 heyText.addEventListener("mouseup", endHold);
 heyText.addEventListener("mouseleave", endHold);
 heyText.addEventListener('mousemove', updateCenter);
-heyText.addEventListener('touchmove', updateCenter);
-heyText.addEventListener("touchstart", e => { e.preventDefault(); startHold(); });
+heyText.addEventListener('touchmove', e => { e.preventDefault(); updateCenter(e); });
+heyText.addEventListener("touchstart", e => { e.preventDefault(); updateCenter(e); startHold(); });
 heyText.addEventListener("touchend", endHold);
 heyText.addEventListener("touchcancel", endHold);
 
@@ -533,3 +533,4 @@ document.querySelectorAll('header nav a').forEach(link=>{
 </script>
 </body>
 </html>
+
