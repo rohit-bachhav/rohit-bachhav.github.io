@@ -428,21 +428,30 @@ async function endHold() {
   }, thamba);
 }
 startIdleHint();
-  function updateSplashColors() {
-    const dark = document.body.classList.contains("dark");
-    splash.style.background = getComputedStyle(document.body).getPropertyValue('--bg');
-    heyText.style.color = getComputedStyle(document.body).getPropertyValue('--text');
-    progressBar.style.background = dark ? '#00d1ff' : '#0071e3';
+function updateSplashColors() {
+  const dark = document.body.classList.contains("dark");
+  splash.style.background = getComputedStyle(document.body).getPropertyValue('--bg');
+  heyText.style.color = getComputedStyle(document.body).getPropertyValue('--text');
+  progressBar.style.background = dark ? '#00d1ff' : '#0071e3';
+}
+function updateCenter(e) {
+  if (e.touches) {
+    // Mobile touch event
+    centerX = e.touches[0].pageX;
+    centerY = e.touches[0].pageY;
+  } else {
+    // Mouse event
+    centerX = e.pageX;
+    centerY = e.pageY;
   }
-  
+}
+
 // Mouse & Touch events
 heyText.addEventListener("mousedown", startHold);
 heyText.addEventListener("mouseup", endHold);
 heyText.addEventListener("mouseleave", endHold);
-heyText.addEventListener('mousemove', (event) => {
-    centerX = event.pageX;
-    centerY = event.pageY;
-});
+heyText.addEventListener('mousemove', updateCenter);
+heyText.addEventListener('touchmove', updateCenter);
 heyText.addEventListener("touchstart", e => { e.preventDefault(); startHold(); });
 heyText.addEventListener("touchend", endHold);
 heyText.addEventListener("touchcancel", endHold);
