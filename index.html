@@ -1,406 +1,629 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rohit Bachhav | Portfolio</title>
-<style>
-:root{
-  --bg:#ffffff; --text:#111; --accent:#0071e3; --card-bg:rgba(255,255,255,0.6);
-}
-body.dark{--bg:#111;--text:#decdcd;--accent:#0aa3ff;--card-bg:rgba(28,28,28,0.6);}
-body{margin:0;font-family:"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background 0.5s,color 0.5s;overflow-x:hidden;}
-
-/* Splash screen */
-#splash {
-  position: fixed;
-  user-select: none;
-  top:0; left:0; width:100%; height:100%;
-  background:var(--bg);
-  display:flex; flex-direction:column; justify-content:center; align-items:center;
-  color:var(--text); font-family:sans-serif;
-  z-index:10000;
-  transition: opacity 1s ease,background 1s ease, color 1s ease;
-}
-#splash.hidden { opacity:0; pointer-events:none; }
-#heyText {
-  font-size:5rem;
-  transition: transform 0.5s ease, color 0.5s ease;
-}
-#splash p {
-  margin-top:1rem;
-  font-size:1.2rem;
-  color:rgba(255,255,255,0.7);
-}
-#splashCanvas {
-  position: absolute;
-  top:0; left:0; width:100%; height:100%;
-  z-index:1;
-  pointer-events: none;
-}
-#progressContainer {
-  width: 200px;
-  height: 8px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 4px;
-  margin-top: 20px;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 1s;
-}
-#progressBar {
-  width: 0%;
-  height: 100%;
-  background: #00d1ff;
-  transition: width 0.1s linear, background 0.5s;
-}
-
-@keyframes holoGlow {
-  0% {
-    text-shadow:
-      0 0 15px rgba(0, 209, 255, 0.7),
-      0 0 30px rgba(0, 209, 255, 0.4);
-    opacity: 0.9;
-  }
-  50% {
-    text-shadow:
-      0 0 30px rgba(0, 255, 180, 0.9),
-      0 0 60px rgba(0, 255, 255, 0.8);
-    opacity: 1;
-  }
-  100% {
-    text-shadow:
-      0 0 15px rgba(0, 209, 255, 0.7),
-      0 0 30px rgba(0, 209, 255, 0.4);
-    opacity: 0.9;
-  }
-}
-
-#heyText.hint {
-  animation: holoGlow 3s ease-in-out infinite;
-}
-
-/* Header */
-header{position:sticky;top:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.4);backdrop-filter:blur(10px);padding:1rem 2rem;box-shadow:0 4px 16px rgba(0,0,0,0.05);transition:background 0.5s;}
-body.dark header{background:rgba(28,28,28,0.4);}
-header .logo{font-weight:bold;font-size:1.4rem;color:var(--accent);}
-header nav a{margin:0 1rem;text-decoration:none;color:var(--text);font-weight:500;position:relative;transition:color 0.3s;}
-header nav a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--accent);transition:0.3s;}
-header nav a:hover::after{width:100%;}
-header nav a:hover{color:var(--accent);}
-#theme-toggle{position: fixed;bottom: 20px;right: 20px;z-index: 10001; background:var(--accent);color:#fff;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;}
-
-/* Sections */
-section{position:relative;padding:6rem 2rem 4rem;max-width:1000px;margin:auto;transition:transform 0.3s;}
-h2{text-align:center;margin-bottom:2rem;position:relative;z-index:1;background:linear-gradient(90deg,var(--accent),#0aa3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite;}
-@keyframes shimmer{0%{background-position:-500px 0;}100%{background-position:500px 0;}}
-
-/* Hero */
-#hero{text-align:center;position:relative;z-index:1;overflow:hidden;}
-.hero-tagline{margin:1rem 0;font-weight:500;color:var(--accent);transition:transform 0.3s;}
-.resume-btn{margin-top:1rem;padding:0.6rem 1.2rem;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;font-weight:500;transition:background 0.3s,transform 0.3s;}
-.resume-btn:hover{background:#005bb5;transform:scale(1.05);}
-
-/* Cards */
-.projects-grid, .skills-grid, .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;position:relative;z-index:1;}
-.project-card, .skill-card, .contact-card{
-  position:relative;overflow:hidden;padding:1.5rem;border-radius:16px;background:var(--card-bg);backdrop-filter:blur(8px);box-shadow:0 8px 20px rgba(0,0,0,0.2);opacity:0;transform:translateY(40px) rotateX(10deg);transition:transform 0.6s,opacity 0.6s,box-shadow 0.6s;
-}
-.project-card.visible, .skill-card.visible, .contact-card.visible{opacity:1;transform:translateY(0) rotateX(0deg);}
-.project-card:hover, .skill-card:hover, .contact-card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(0,0,0,0.15);}
-
-/* Section Scroll Indicators */
-#scroll-indicator{position:fixed;top:50%;right:1rem;transform:translateY(-50%);display:flex;flex-direction:column;gap:1rem;z-index:999;}
-#scroll-indicator span{width:12px;height:12px;border-radius:50%;background:var(--card-bg);opacity:0.5;transition:opacity 0.3s,transform 0.3s;}
-#scroll-indicator span.active{opacity:1;transform:scale(1.3);}
-
-/* Footer */
-footer{text-align:center;padding:1rem;background:transparent;color:var(--text);position:relative;z-index:1;}
-
-/* Particle & Code Canvas */
-#particles, #code-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;}
-
-/*word spawn*/
-.cursor-tech{position:absolute;font-size:14px;font-weight:bold;color:var(--text);pointer-events:none;white-space:nowrap;user-select:none;z-index:10002;transition:opacity 0.3s;}
-
-</style>
-</head>
-<body class = "dark">
-
-<!-- Splash -->
-<div id="splash">
-  <canvas id="splashCanvas"></canvas>
-  <h1 id="heyText">Hey</h1>
-  <div id="progressContainer">
-    <div id="progressBar"></div>
-  </div>
-</div>
-
-<canvas id="particles"></canvas>
-<canvas id="code-canvas"></canvas>
-<button id="theme-toggle">🌙</button>
-<header>
-  <div class="logo">Rohit Bachhav</div>
-  <nav>
-    <a href="#projects">Projects</a>
-    <a href="#skills">Skills</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
-
-<section id="hero">
-  <h1>Rohit Nivrutti Bachhav</h1>
-  <p class="hero-tagline">Python • SQL • Deep Learning • Azure Certified • Problem Solver</p>
-  <a href="resume.pdf" class="resume-btn" download>Download Resume</a>
-</section>
-
-<section id="projects">
-  <h2>Projects</h2>
-  <div class="projects-grid">
-    <div class="project-card">
-      <h3>Exam Seating Arrangement System</h3>
-      <p>Node.js + MySQL: Designed dynamic seat allocation algorithm for exams with efficient database queries.</p>
-      <a href="#">GitHub</a>
-    </div>
-    <div class="project-card">
-      <h3>File Sharing Web App</h3>
-      <p>Node.js + JS: Implemented secure file sharing, authentication and access control system.</p>
-      <a href="#">GitHub</a>
-    </div>
-    <div class="project-card">
-      <h3>Mouse Control App</h3>
-      <p>React Native + FastAPI: Mobile device connects via QR to control PC mouse remotely.</p>
-      <a href="#">GitHub</a>
-    </div>
-  </div>
-</section>
-
-<section id="skills">
-  <h2>Technical Skills</h2>
-  <div class="skills-grid">
-    <div class="skill-card">Python</div>
-    <div class="skill-card">SQL</div>
-    <div class="skill-card">C++</div>
-    <div class="skill-card">JavaScript</div>
-    <div class="skill-card">FastAPI</div>
-    <div class="skill-card">Pandas & NumPy</div>
-    <div class="skill-card">PyTorch & TensorFlow</div>
-    <div class="skill-card">Azure (AZ-900 Certified)</div>
-  </div>
-</section>
-
-<section id="contact">
-  <h2>Contact</h2>
-  <div class="contact-grid">
-    <div class="contact-card">
-      <p>📧 <a href="mailto:rohitbachhav122@gmail.com">rohitbachhav122@gmail.com</a></p>
-      <p>💼 LinkedIn: <a href="https://linkedin.com/in/rohitbachhav">linkedin.com/in/rohitbachhav</a></p>
-    </div>
-  </div>
-</section>
-
-<div id="scroll-indicator">
-  <span data-target="projects"></span>
-  <span data-target="skills"></span>
-  <span data-target="contact"></span>
-</div>
-
-<footer>
-  <p>© 2025 Rohit Bachhav</p>
-</footer>
-
-<script>
-  
-  // SPLASH CANVAS
-  const splashCanvas = document.getElementById('splashCanvas');
-  const sCtx = splashCanvas.getContext('2d');
-  let W = splashCanvas.width = window.innerWidth;
-  let H = splashCanvas.height = window.innerHeight;
-  window.addEventListener('resize', () => {
-    W = splashCanvas.width = window.innerWidth;
-    H = splashCanvas.height = window.innerHeight;
-  });
-  const techNames = ["Python", "SQL", "JavaScript", "C++", "FastAPI", "Azure", "Pandas", "NumPy", "PyTorch", "TensorFlow"];
-    const techParticles = [];
-
-    // Function to check overlap horizontally
-    function isOverlapping(x, y, w, arr) {
-      for (let p of arr) {
-        if (x < p.x + p.w && x + w > p.x && y < p.y + 30 && y + 30 > p.y) return true; // 30px height approx
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rohit Bachhav | Portfolio</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #111;
+        --accent: #0071e3;
+        --card-bg: rgba(255, 255, 255, 0.6);
       }
-      return false;
-    }
+      body.dark {
+        --bg: #111;
+        --text: #decdcd;
+        --accent: #0aa3ff;
+        --card-bg: rgba(28, 28, 28, 0.6);
+      }
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition: background 0.5s, color 0.5s;
+        overflow-x: hidden;
+      }
 
-    // Generate dense horizontal words
-    for (let i = 0; i < 120; i++) {
-      let fontSize = 12 + Math.random() * 20;
-      let text = techNames[Math.floor(Math.random() * techNames.length)];
-      sCtx.font = fontSize + "px Arial";
-      let textWidth = sCtx.measureText(text).width;
-      let attempts = 0;
-      let x = 0, y = 0;
-      do {
-        x = Math.random() * (W - 50);
-        y = Math.random() * (H - 50);
-        attempts++;
-      } while (isOverlapping(x, y, textWidth, techParticles) && attempts < 50);
-      techParticles.push({ x, y, text, font: fontSize, alpha: 0.05 + Math.random() * 0.2, dx: (Math.random() * 0.2 - 0.1) });
-    }
-  let splashAnimFrame;
-  function drawSplash() {
-    sCtx.clearRect(0, 0, W, H);
-    techParticles.forEach(p => {
-      // slow horizontal floating
-      p.x += p.dx;
-      if (p.x > W) p.x = -50;
-      if (p.x < -50) p.x = W;
+      /* Splash screen */
+      #splash {
+        position: fixed;
+        user-select: none;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: var(--text);
+        font-family: sans-serif;
+        z-index: 10000;
+        transition: opacity 1s ease, background 1s ease, color 1s ease;
+      }
+      #splash.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #heyText {
+        font-size: 5rem;
+        transition: transform 0.5s ease, color 0.5s ease;
+      }
+      #splash p {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      #splashCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
+      #progressContainer {
+        width: 200px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-top: 20px;
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 1s;
+      }
+      #progressBar {
+        width: 0%;
+        height: 100%;
+        background: #00d1ff;
+        transition: width 0.1s linear, background 0.5s;
+      }
 
-      const dist = Math.hypot(p.x, p.y);
-      let scale = 1, alpha = p.alpha;
-      if (dist < 100) { scale = 1.3; alpha = 0.5; }
+      @keyframes holoGlow {
+        0% {
+          text-shadow: 0 0 15px rgba(0, 209, 255, 0.7), 0 0 30px rgba(0, 209, 255, 0.4);
+          opacity: 0.9;
+        }
+        50% {
+          text-shadow: 0 0 30px rgba(0, 255, 180, 0.9), 0 0 60px rgba(0, 255, 255, 0.8);
+          opacity: 1;
+        }
+        100% {
+          text-shadow: 0 0 15px rgba(0, 209, 255, 0.7), 0 0 30px rgba(0, 209, 255, 0.4);
+          opacity: 0.9;
+        }
+      }
 
-      sCtx.globalAlpha = alpha;
-      sCtx.font = (p.font * scale) + "px Arial";
-      sCtx.fillStyle = document.body.classList.contains('dark') ? '#fff' : '#111';
-      sCtx.fillText(p.text, p.x, p.y);
-    });
-    splashAnimFrame = requestAnimationFrame(drawSplash);
-  }
-  drawSplash()
-// Splash 5-second hold with glow
-const splash = document.getElementById("splash");
-const heyText = document.getElementById("heyText");
-const progressBar = document.getElementById("progressBar");
-const progressContainer = document.getElementById("progressContainer");
-let holdStart = 0;
-let holdInterval;
-let idleTimeout;
-let heyScale = 1;
-const maxScale = 3;
-let holdSpawningInterval;
-let wobbleBase = 1.6;
-let wobbleMax = 1.6;
-let wobbleSpeed = 8;
-let distanceThreshold = 20;
-const rect = heyText.getBoundingClientRect();
-let centerX;
-let centerY;
-//word logic
-function wordSpawn(){
-  
-  const span = document.createElement("span");
-  span.className = "cursor-tech";
-  span.textContent = techNames[Math.floor(Math.random() * techNames.length)];
-  
-  span.style.opacity = 1;
-  document.body.appendChild(span);
+      #heyText.hint {
+        animation: holoGlow 3s ease-in-out infinite;
+      }
 
-  // Random slow movement vector
-  const angle = Math.random() * 2 * Math.PI;
-  const distance = 80 + Math.random() * 120; // start farther out
-  const wordlastX = centerX
-  const wordlastY = centerY
-  const startX = wordlastX + Math.cos(angle) *distance;
-  const startY = wordlastY + Math.sin(angle) *distance;
-  span.style.left = startX + "px";
-  span.style.top = startY + "px";
-  let life = 0;
-  let ct = 1
-  const maxLife = 80;
-  let startstopwordspwan = 0
-  const anim = setInterval(() => {
-    life++;
-    let t = life / maxLife;
-    const easeIn = Math.pow(t, 2.5);
-    const x = startX + (wordlastX - startX) * easeIn;
-    const y = startY + (wordlastY - startY) * easeIn;
-    const fade = 1 - Math.pow(t, 1.5);
+      /* Header */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        transition: background 0.5s;
+      }
+      body.dark header {
+        background: rgba(28, 28, 28, 0.4);
+      }
+      header .logo {
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: var(--accent);
+      }
+      header nav a {
+        margin: 0 1rem;
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 500;
+        position: relative;
+        transition: color 0.3s;
+      }
+      header nav a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 0;
+        height: 2px;
+        background: var(--accent);
+        transition: 0.3s;
+      }
+      header nav a:hover::after {
+        width: 100%;
+      }
+      header nav a:hover {
+        color: var(--accent);
+      }
+      #theme-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 10001;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        cursor: pointer;
+      }
 
-    span.style.left = `${x}px`;
-    span.style.top = `${y}px`;
-    span.style.opacity = fade;
+      /* Sections */
+      section {
+        position: relative;
+        padding: 6rem 2rem 4rem;
+        max-width: 1000px;
+        margin: auto;
+        transition: transform 0.3s;
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(90deg, var(--accent), #0aa3ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 4s linear infinite;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -500px 0;
+        }
+        100% {
+          background-position: 500px 0;
+        }
+      }
 
-    if ((life >= maxLife) || (Math.abs(x - wordlastX) < 30 && Math.abs(y - wordlastY) < 30)) {
-      span.remove();
-      clearInterval(anim);
-    }
-  }, 3);
-}
-function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
-function easeOutOvershoot(t) {
-  const c1 = 1.70158; // overshoot constant
-  return 1 + c1 * Math.pow(t - 1, 3) + (1 + c1) * Math.pow(t - 1, 2);
-}
+      /* Hero */
+      #hero {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+      }
+      .hero-tagline {
+        margin: 1rem 0;
+        font-weight: 500;
+        color: var(--accent);
+        transition: transform 0.3s;
+      }
+      .resume-btn {
+        margin-top: 1rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s, transform 0.3s;
+      }
+      .resume-btn:hover {
+        background: #005bb5;
+        transform: scale(1.05);
+      }
 
-function startIdleHint() {
-  idleTimeout = setTimeout(() => {
-    heyText.classList.add("hint");
-    heyText.style.transition = "transform 0.6s ease, text-shadow 0.6s ease";
-    heyText.style.transform = "scale(1.1)";
-    heyText.style.textShadow = "0 0 20px #00d1ff, 0 0 40px #00d1ff";
-  }, 2000);
-}
-function stopIdleHint() {
-  clearTimeout(idleTimeout);
-  heyText.classList.remove("hint");
-  heyText.style.transition = "transform 0.6s ease, text-shadow 0.6s ease";
-  heyText.style.transform = `scale(${heyScale})`;
-  heyText.style.textShadow = "";
-}
+      /* Cards */
+      .projects-grid,
+      .skills-grid,
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+      }
+      .project-card,
+      .skill-card,
+      .contact-card {
+        position: relative;
+        overflow: hidden;
+        padding: 1.5rem;
+        border-radius: 16px;
+        background: var(--card-bg);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transform: translateY(40px) rotateX(10deg);
+        transition: transform 0.6s, opacity 0.6s, box-shadow 0.6s;
+      }
+      .project-card.visible,
+      .skill-card.visible,
+      .contact-card.visible {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+      }
+      .project-card:hover,
+      .skill-card:hover,
+      .contact-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+      }
 
-function finishSplash() {
-  
-  splash.classList.add("hidden");
-  document.querySelectorAll("header, section, footer").forEach(el => el.style.pointerEvents = "auto");
-  setTimeout(() => {
-    cancelAnimationFrame(splashAnimFrame);
-    splash.remove();
-  }, 1000);
-}
-function wobbleWord(t=0.1){
-  const wobbleRange = wobbleBase + (wobbleMax - wobbleBase) * t;
-  heyScale = wobbleRange + 1.5 * Math.sin(Date.now() / 100 * wobbleSpeed);
-  const glow = 10 + 200 * t; // glow intensity increases
-  heyText.style.transform = `scale(${heyScale})`;
-  heyText.style.textShadow = `0 0 ${glow}px #00d1ff, 0 0 ${glow * 2}px #00d1ff`;
-}
-let thamba = 0
-function startHold() {
-  
-  stopIdleHint();
-  startstopwordspwan = 1
-  clearInterval(holdInterval);
-  holdStart = Date.now();
-  progressContainer.style.opacity = 1
-  progressBar.style.width = "0%";
-  heyScale = 1;
-  heyText.style.transform = `scale(${heyScale})`;
-  heyText.style.textShadow = "";
-  
-  holdInterval = setInterval(() => {
-    const elapsed = (Date.now() - holdStart) / 1000;
-    const t = Math.min(elapsed / 5, 1);
-    progressBar.style.width = (t * 100) + "%";
-    if(startstopwordspwan){
-      wordSpawn();
-    }
-    // Scale and glow while holding
-    if(elapsed>0.5){
-      thamba = 500
-      wobbleWord(t);
-    } else if (elapsed > 0.25) {
-      thamba = 25
-    } else if (elapsed > 0.1) {
-      thamba = 100
-    }
+      /* Section Scroll Indicators */
+      #scroll-indicator {
+        position: fixed;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        z-index: 999;
+      }
+      #scroll-indicator span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--card-bg);
+        opacity: 0.5;
+        transition: opacity 0.3s, transform 0.3s;
+      }
+      #scroll-indicator span.active {
+        opacity: 1;
+        transform: scale(1.3);
+      }
 
-    if (elapsed >= 5) {
-      clearInterval(holdInterval);
-      finishSplash();
-    }
-  }, 30);
-}
-/*
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 1rem;
+        background: transparent;
+        color: var(--text);
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Particle & Code Canvas */
+      #particles,
+      #code-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /*word spawn*/
+      .cursor-tech {
+        position: absolute;
+        font-size: 14px;
+        font-weight: bold;
+        color: var(--text);
+        pointer-events: none;
+        touch-action: none;
+        user-select: none;
+        white-space: nowrap;
+        user-select: none;
+        z-index: 10002;
+        transition: opacity 0.3s;
+      }
+    </style>
+  </head>
+  <body class="dark">
+    <!-- Splash -->
+    <div id="splash">
+      <canvas id="splashCanvas"></canvas>
+      <h1 id="heyText">Hey</h1>
+      <div id="progressContainer">
+        <div id="progressBar"></div>
+      </div>
+    </div>
+
+    <canvas id="particles"></canvas>
+    <canvas id="code-canvas"></canvas>
+    <button id="theme-toggle">🌙</button>
+    <header>
+      <div class="logo">Rohit Bachhav</div>
+      <nav>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <section id="hero">
+      <h1>Rohit Nivrutti Bachhav</h1>
+      <p class="hero-tagline">Python • SQL • Deep Learning • Azure Certified • Problem Solver</p>
+      <a href="resume.pdf" class="resume-btn" download>Download Resume</a>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <h3>Exam Seating Arrangement System</h3>
+          <p>
+            Node.js + MySQL: Designed dynamic seat allocation algorithm for exams with efficient
+            database queries.
+          </p>
+          <a href="#">GitHub</a>
+        </div>
+        <div class="project-card">
+          <h3>File Sharing Web App</h3>
+          <p>
+            Node.js + JS: Implemented secure file sharing, authentication and access control system.
+          </p>
+          <a href="#">GitHub</a>
+        </div>
+        <div class="project-card">
+          <h3>Mouse Control App</h3>
+          <p>React Native + FastAPI: Mobile device connects via QR to control PC mouse remotely.</p>
+          <a href="#">GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2>Technical Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-card">Python</div>
+        <div class="skill-card">SQL</div>
+        <div class="skill-card">C++</div>
+        <div class="skill-card">JavaScript</div>
+        <div class="skill-card">FastAPI</div>
+        <div class="skill-card">Pandas & NumPy</div>
+        <div class="skill-card">PyTorch & TensorFlow</div>
+        <div class="skill-card">Azure (AZ-900 Certified)</div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <p>
+            📧
+            <a href="mailto:rohitbachhav122@gmail.com">rohitbachhav122@gmail.com</a>
+          </p>
+          <p>
+            💼 LinkedIn:
+            <a href="https://linkedin.com/in/rohitbachhav">linkedin.com/in/rohitbachhav</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div id="scroll-indicator">
+      <span data-target="projects"></span>
+      <span data-target="skills"></span>
+      <span data-target="contact"></span>
+    </div>
+
+    <footer>
+      <p>© 2025 Rohit Bachhav</p>
+    </footer>
+
+    <script>
+      // SPLASH CANVAS
+      const splashCanvas = document.getElementById('splashCanvas');
+      const sCtx = splashCanvas.getContext('2d');
+      let W = (splashCanvas.width = window.innerWidth);
+      let H = (splashCanvas.height = window.innerHeight);
+      window.addEventListener('resize', () => {
+        W = splashCanvas.width = window.innerWidth;
+        H = splashCanvas.height = window.innerHeight;
+      });
+      const techNames = [
+        'Python',
+        'SQL',
+        'JavaScript',
+        'C++',
+        'FastAPI',
+        'Azure',
+        'Pandas',
+        'NumPy',
+        'PyTorch',
+        'TensorFlow',
+      ];
+      const techParticles = [];
+
+      // Function to check overlap horizontally
+      function isOverlapping(x, y, w, arr) {
+        for (let p of arr) {
+          if (x < p.x + p.w && x + w > p.x && y < p.y + 30 && y + 30 > p.y) return true; // 30px height approx
+        }
+        return false;
+      }
+
+      // Generate dense horizontal words
+      for (let i = 0; i < 120; i++) {
+        let fontSize = 12 + Math.random() * 20;
+        let text = techNames[Math.floor(Math.random() * techNames.length)];
+        sCtx.font = fontSize + 'px Arial';
+        let textWidth = sCtx.measureText(text).width;
+        let attempts = 0;
+        let x = 0,
+          y = 0;
+        do {
+          x = Math.random() * (W - 50);
+          y = Math.random() * (H - 50);
+          attempts++;
+        } while (isOverlapping(x, y, textWidth, techParticles) && attempts < 50);
+        techParticles.push({
+          x,
+          y,
+          text,
+          font: fontSize,
+          alpha: 0.05 + Math.random() * 0.2,
+          dx: Math.random() * 0.2 - 0.1,
+        });
+      }
+      let splashAnimFrame;
+      function drawSplash() {
+        sCtx.clearRect(0, 0, W, H);
+        techParticles.forEach((p) => {
+          // slow horizontal floating
+          p.x += p.dx;
+          if (p.x > W) p.x = -50;
+          if (p.x < -50) p.x = W;
+
+          const dist = Math.hypot(p.x, p.y);
+          let scale = 1,
+            alpha = p.alpha;
+          if (dist < 100) {
+            scale = 1.3;
+            alpha = 0.5;
+          }
+
+          sCtx.globalAlpha = alpha;
+          sCtx.font = p.font * scale + 'px Arial';
+          sCtx.fillStyle = document.body.classList.contains('dark') ? '#fff' : '#111';
+          sCtx.fillText(p.text, p.x, p.y);
+        });
+        splashAnimFrame = requestAnimationFrame(drawSplash);
+      }
+      drawSplash();
+      // Splash 5-second hold with glow
+      const splash = document.getElementById('splash');
+      const heyText = document.getElementById('heyText');
+      const progressBar = document.getElementById('progressBar');
+      const progressContainer = document.getElementById('progressContainer');
+      let holdStart = 0;
+      let holdInterval;
+      let idleTimeout;
+      let heyScale = 1;
+      const maxScale = 3;
+      let holdSpawningInterval;
+      let wobbleBase = 1.6;
+      let wobbleMax = 1.6;
+      let wobbleSpeed = 8;
+      let distanceThreshold = 20;
+      const rect = heyText.getBoundingClientRect();
+      let centerX;
+      let centerY;
+      //word logic
+      function wordSpawn() {
+        const span = document.createElement('span');
+        span.className = 'cursor-tech';
+        span.textContent = techNames[Math.floor(Math.random() * techNames.length)];
+
+        span.style.opacity = 1;
+        document.body.appendChild(span);
+
+        // Random slow movement vector
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 80 + Math.random() * 120; // start farther out
+        const wordlastX = centerX;
+        const wordlastY = centerY;
+        const startX = wordlastX + Math.cos(angle) * distance;
+        const startY = wordlastY + Math.sin(angle) * distance;
+        span.style.left = startX + 'px';
+        span.style.top = startY + 'px';
+        let life = 0;
+        let ct = 1;
+        const maxLife = 80;
+        let startstopwordspwan = 0;
+        const anim = setInterval(() => {
+          life++;
+          let t = life / maxLife;
+          const easeIn = Math.pow(t, 2.5);
+          const x = startX + (wordlastX - startX) * easeIn;
+          const y = startY + (wordlastY - startY) * easeIn;
+          const fade = 1 - Math.pow(t, 1.5);
+
+          span.style.left = `${x}px`;
+          span.style.top = `${y}px`;
+          span.style.opacity = fade;
+
+          if (life >= maxLife || (Math.abs(x - wordlastX) < 30 && Math.abs(y - wordlastY) < 30)) {
+            span.remove();
+            clearInterval(anim);
+          }
+        }, 3);
+      }
+      function easeOut(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+      function easeOutOvershoot(t) {
+        const c1 = 1.70158; // overshoot constant
+        return 1 + c1 * Math.pow(t - 1, 3) + (1 + c1) * Math.pow(t - 1, 2);
+      }
+
+      function startIdleHint() {
+        idleTimeout = setTimeout(() => {
+          heyText.classList.add('hint');
+          heyText.style.transition = 'transform 0.6s ease, text-shadow 0.6s ease';
+          heyText.style.transform = 'scale(1.1)';
+          heyText.style.textShadow = '0 0 20px #00d1ff, 0 0 40px #00d1ff';
+        }, 2000);
+      }
+      function stopIdleHint() {
+        clearTimeout(idleTimeout);
+        heyText.classList.remove('hint');
+        heyText.style.transition = 'transform 0.6s ease, text-shadow 0.6s ease';
+        heyText.style.transform = `scale(${heyScale})`;
+        heyText.style.textShadow = '';
+      }
+
+      function finishSplash() {
+        splash.classList.add('hidden');
+        document
+          .querySelectorAll('header, section, footer')
+          .forEach((el) => (el.style.pointerEvents = 'auto'));
+        setTimeout(() => {
+          cancelAnimationFrame(splashAnimFrame);
+          splash.remove();
+        }, 1000);
+      }
+      function wobbleWord(t = 0.1) {
+        const wobbleRange = wobbleBase + (wobbleMax - wobbleBase) * t;
+        heyScale = wobbleRange + 1.5 * Math.sin((Date.now() / 100) * wobbleSpeed);
+        const glow = 10 + 200 * t; // glow intensity increases
+        heyText.style.transform = `scale(${heyScale})`;
+        heyText.style.textShadow = `0 0 ${glow}px #00d1ff, 0 0 ${glow * 2}px #00d1ff`;
+      }
+      let thamba = 0;
+      function startHold() {
+        stopIdleHint();
+        startstopwordspwan = 1;
+        clearInterval(holdInterval);
+        holdStart = Date.now();
+        progressContainer.style.opacity = 1;
+        progressBar.style.width = '0%';
+        heyScale = 1;
+        heyText.style.transform = `scale(${heyScale})`;
+        heyText.style.textShadow = '';
+
+        holdInterval = setInterval(() => {
+          const elapsed = (Date.now() - holdStart) / 1000;
+          const t = Math.min(elapsed / 5, 1);
+          progressBar.style.width = t * 100 + '%';
+          if (startstopwordspwan) {
+            wordSpawn();
+          }
+          // Scale and glow while holding
+          if (elapsed > 0.5) {
+            thamba = 500;
+            wobbleWord(t);
+          } else if (elapsed > 0.25) {
+            thamba = 25;
+          } else if (elapsed > 0.1) {
+            thamba = 100;
+          }
+
+          if (elapsed >= 5) {
+            clearInterval(holdInterval);
+            finishSplash();
+          }
+        }, 30);
+      }
+      /*
 function wobbleFor(duration = 100) {
   return new Promise(resolve => {
     const start = performance.now();
@@ -413,124 +636,229 @@ function wobbleFor(duration = 100) {
   });
 }
 */
-async function endHold() {
-  stopIdleHint();
-  startstopwordspwan = 0
-  
-  setTimeout(() => clearInterval(holdInterval), thamba);
-  setTimeout(() => {
-    progressBar.style.width = "0%";
-    heyScale = 1;
-    heyText.style.transform = `scale(${heyScale})`;
-    heyText.style.textShadow = "";
-    progressContainer.style.opacity = 0
-    startIdleHint();
-  }, thamba);
-}
-startIdleHint();
-function updateSplashColors() {
-  const dark = document.body.classList.contains("dark");
-  splash.style.background = getComputedStyle(document.body).getPropertyValue('--bg');
-  heyText.style.color = getComputedStyle(document.body).getPropertyValue('--text');
-  progressBar.style.background = dark ? '#00d1ff' : '#0071e3';
-}
-function updateCenter(e) {
-  if (e.touches) {
-    // Mobile touch event
-    centerX = e.touches[0].pageX;
-    centerY = e.touches[0].pageY;
-  } else {
-    // Mouse event
-    centerX = e.pageX;
-    centerY = e.pageY;
-  }
-}
+      async function endHold() {
+        stopIdleHint();
+        startstopwordspwan = 0;
 
-// Mouse & Touch events
-heyText.addEventListener("mousedown", startHold);
-heyText.addEventListener("mouseup", endHold);
-heyText.addEventListener("mouseleave", endHold);
-heyText.addEventListener('mousemove', updateCenter);
-heyText.addEventListener('touchmove', e => { e.preventDefault(); updateCenter(e); });
-heyText.addEventListener("touchstart", e => { e.preventDefault(); updateCenter(e); startHold(); });
-heyText.addEventListener("touchend", endHold);
-heyText.addEventListener("touchcancel", endHold);
+        setTimeout(() => clearInterval(holdInterval), thamba);
+        setTimeout(() => {
+          progressBar.style.width = '0%';
+          heyScale = 1;
+          heyText.style.transform = `scale(${heyScale})`;
+          heyText.style.textShadow = '';
+          progressContainer.style.opacity = 0;
+          startIdleHint();
+        }, thamba);
+      }
+      startIdleHint();
+      function updateSplashColors() {
+        const dark = document.body.classList.contains('dark');
+        splash.style.background = getComputedStyle(document.body).getPropertyValue('--bg');
+        heyText.style.color = getComputedStyle(document.body).getPropertyValue('--text');
+        progressBar.style.background = dark ? '#00d1ff' : '#0071e3';
+      }
+      function updateCenter(e) {
+        if (e.touches) {
+          // Mobile touch event
+          centerX = e.touches[0].pageX;
+          centerY = e.touches[0].pageY;
+        } else {
+          // Mouse event
+          centerX = e.pageX;
+          centerY = e.pageY;
+        }
+      }
 
-// Disable interactions until splash ends
-document.querySelectorAll("header, section, footer").forEach(el => el.style.pointerEvents = "none");
+      // Mouse & Touch events
+      heyText.addEventListener('mousedown', startHold);
+      heyText.addEventListener('mouseup', endHold);
+      heyText.addEventListener('mouseleave', endHold);
+      heyText.addEventListener('mousemove', updateCenter);
+      heyText.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        updateCenter(e);
+      });
+      heyText.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        updateCenter(e);
+        startHold();
+      });
+      heyText.addEventListener('touchend', endHold);
+      heyText.addEventListener('touchcancel', endHold);
 
+      // Disable interactions until splash ends
+      document
+        .querySelectorAll('header, section, footer')
+        .forEach((el) => (el.style.pointerEvents = 'none'));
 
-// Dark Mode
-const themeBtn=document.getElementById("theme-toggle");
-if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){document.body.classList.add("dark");themeBtn.textContent="☀️";}
-themeBtn.addEventListener("click",()=>{document.body.classList.toggle("dark");themeBtn.textContent=document.body.classList.contains("dark")?"☀️":"🌙"; updateSplashColors() });
+      // Dark Mode
+      const themeBtn = document.getElementById('theme-toggle');
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+        themeBtn.textContent = '☀️';
+      }
+      themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        updateSplashColors();
+      });
 
-// Fade-in Cards
-const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");});},{threshold:0.2});
-document.querySelectorAll(".project-card,.skill-card,.contact-card").forEach(el=>observer.observe(el));
+      // Fade-in Cards
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+          });
+        },
+        { threshold: 0.2 }
+      );
+      document
+        .querySelectorAll('.project-card,.skill-card,.contact-card')
+        .forEach((el) => observer.observe(el));
 
-// Particle Background
-const canvas=document.getElementById("particles"),ctx=canvas.getContext("2d");
-function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resizeCanvas(); window.addEventListener("resize",resizeCanvas);
-let particles=[];for(let i=0;i<80;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,r:2});}
-let mouse={x:null,y:null};
-canvas.addEventListener("mousemove",e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
-canvas.addEventListener("mouseleave",()=>{mouse.x=null;mouse.y=null;});
-function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);for(let p of particles){p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1;if(mouse.x!==null){let dx=p.x-mouse.x,dy=p.y-mouse.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){let force=(120-dist)/120*0.8;p.dx+=dx/dist*force;p.dy+=dy/dist*force;}}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle="rgba(0,113,227,0.5)";ctx.fill();}for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){let dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<100){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle="rgba(0,113,227,0.15)";ctx.stroke();}}}requestAnimationFrame(animateParticles);}
-animateParticles();
+      // Particle Background
+      const canvas = document.getElementById('particles'),
+        ctx = canvas.getContext('2d');
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      let particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3,
+          r: 2,
+        });
+      }
+      let mouse = { x: null, y: null };
+      canvas.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
+      });
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let p of particles) {
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+          if (mouse.x !== null) {
+            let dx = p.x - mouse.x,
+              dy = p.y - mouse.y,
+              dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              let force = ((120 - dist) / 120) * 0.8;
+              p.dx += (dx / dist) * force;
+              p.dy += (dy / dist) * force;
+            }
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0,113,227,0.5)';
+          ctx.fill();
+        }
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            let dx = particles[i].x - particles[j].x,
+              dy = particles[i].y - particles[j].y,
+              dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 100) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(0,113,227,0.15)';
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animateParticles);
+      }
+      animateParticles();
 
-// Cursor-reactive Code Drops
-const codeCanvas=document.getElementById("code-canvas");
-const codeCtx=codeCanvas.getContext("2d");
-function resizeCodeCanvas(){codeCanvas.width=window.innerWidth;codeCanvas.height=window.innerHeight;}
-resizeCodeCanvas(); window.addEventListener("resize",resizeCodeCanvas);
-let codes=[],lastMouse={x:0,y:0};
-const chars="0123456789abcdef<>;{}()[]".split("");
-window.addEventListener("mousemove",e=>{
-  const speed=Math.hypot(e.clientX-lastMouse.x,e.clientY-lastMouse.y);
-  lastMouse={x:e.clientX,y:e.clientY};
-  let spawnCount=Math.min(5,Math.floor(speed/5)+1);
-  for(let i=0;i<spawnCount;i++){
-    codes.push({x:e.clientX+Math.random()*10-5,y:e.clientY+Math.random()*10-5,char:chars[Math.floor(Math.random()*chars.length)],alpha:1,speed:1+Math.random()*1,size:12+Math.random()*6,drift:(Math.random()-0.5)*1.5,rotation:(Math.random()-0.5)*0.3});
-  }
-});
-function animateCode(){
-  codeCtx.clearRect(0,0,codeCanvas.width,codeCanvas.height);
-  for(let i=codes.length-1;i>=0;i--){
-    const c=codes[i];
-    codeCtx.save();
-    codeCtx.translate(c.x,c.y);
-    codeCtx.rotate(c.rotation);
-    codeCtx.fillStyle=`hsla(${200+Math.random()*60},80%,60%,${c.alpha})`;
-    codeCtx.font=`${c.size}px monospace`;
-    codeCtx.fillText(c.char,0,0);
-    codeCtx.restore();
-    c.y+=c.speed;c.x+=c.drift;c.alpha-=0.02;
-    if(c.alpha<=0)codes.splice(i,1);
-  }
-  requestAnimationFrame(animateCode);
-}
-animateCode();
+      // Cursor-reactive Code Drops
+      const codeCanvas = document.getElementById('code-canvas');
+      const codeCtx = codeCanvas.getContext('2d');
+      function resizeCodeCanvas() {
+        codeCanvas.width = window.innerWidth;
+        codeCanvas.height = window.innerHeight;
+      }
+      resizeCodeCanvas();
+      window.addEventListener('resize', resizeCodeCanvas);
+      let codes = [],
+        lastMouse = { x: 0, y: 0 };
+      const chars = '0123456789abcdef<>;{}()[]'.split('');
+      window.addEventListener('mousemove', (e) => {
+        const speed = Math.hypot(e.clientX - lastMouse.x, e.clientY - lastMouse.y);
+        lastMouse = { x: e.clientX, y: e.clientY };
+        let spawnCount = Math.min(5, Math.floor(speed / 5) + 1);
+        for (let i = 0; i < spawnCount; i++) {
+          codes.push({
+            x: e.clientX + Math.random() * 10 - 5,
+            y: e.clientY + Math.random() * 10 - 5,
+            char: chars[Math.floor(Math.random() * chars.length)],
+            alpha: 1,
+            speed: 1 + Math.random() * 1,
+            size: 12 + Math.random() * 6,
+            drift: (Math.random() - 0.5) * 1.5,
+            rotation: (Math.random() - 0.5) * 0.3,
+          });
+        }
+      });
+      function animateCode() {
+        codeCtx.clearRect(0, 0, codeCanvas.width, codeCanvas.height);
+        for (let i = codes.length - 1; i >= 0; i--) {
+          const c = codes[i];
+          codeCtx.save();
+          codeCtx.translate(c.x, c.y);
+          codeCtx.rotate(c.rotation);
+          codeCtx.fillStyle = `hsla(${200 + Math.random() * 60},80%,60%,${c.alpha})`;
+          codeCtx.font = `${c.size}px monospace`;
+          codeCtx.fillText(c.char, 0, 0);
+          codeCtx.restore();
+          c.y += c.speed;
+          c.x += c.drift;
+          c.alpha -= 0.02;
+          if (c.alpha <= 0) codes.splice(i, 1);
+        }
+        requestAnimationFrame(animateCode);
+      }
+      animateCode();
 
-// Scroll Indicator
-const sections=["projects","skills","contact"];
-const indicators=document.querySelectorAll("#scroll-indicator span");
-window.addEventListener("scroll",()=>{let scrollPos=window.scrollY+window.innerHeight/2;sections.forEach((id,i)=>{const sec=document.getElementById(id);if(scrollPos>=sec.offsetTop && scrollPos<sec.offsetTop+sec.offsetHeight){indicators.forEach(s=>s.classList.remove("active"));indicators[i].classList.add("active");}});});
-  updateSplashColors()
-// Smooth scrolling with header offset
-document.querySelectorAll('header nav a').forEach(link=>{
-  link.addEventListener('click', e=>{
-    e.preventDefault();
-    const targetId=link.getAttribute('href').substring(1);
-    const target=document.getElementById(targetId);
-    const headerOffset=document.querySelector('header').offsetHeight;
-    const elementPosition=target.getBoundingClientRect().top;
-    const offsetPosition=elementPosition+window.pageYOffset-headerOffset;
-    window.scrollTo({top:offsetPosition,behavior:'smooth'});
-  });
-});
-</script>
-</body>
+      // Scroll Indicator
+      const sections = ['projects', 'skills', 'contact'];
+      const indicators = document.querySelectorAll('#scroll-indicator span');
+      window.addEventListener('scroll', () => {
+        let scrollPos = window.scrollY + window.innerHeight / 2;
+        sections.forEach((id, i) => {
+          const sec = document.getElementById(id);
+          if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
+            indicators.forEach((s) => s.classList.remove('active'));
+            indicators[i].classList.add('active');
+          }
+        });
+      });
+      updateSplashColors();
+      // Smooth scrolling with header offset
+      document.querySelectorAll('header nav a').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          const target = document.getElementById(targetId);
+          const headerOffset = document.querySelector('header').offsetHeight;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        });
+      });
+    </script>
+  </body>
 </html>
-
